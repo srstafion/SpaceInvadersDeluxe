@@ -10,5 +10,5 @@
 - S - Вправо
 - D - Вниз
 - Spacebar - Стрелять
-## Интерфейс:
-Coming soon!
+## Интерфейс (BETA):
+![preview](https://github.com/srstafion/SpaceInvadersDeluxe/assets/136969493/bf0773b1-d3de-43c0-809d-e03c2787a655)
