@@ -1,10 +1,10 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <vector>
 #include <ctime>
 #include <random>
+#include "GameMenu.h"
 #define random(a, b) (a + rand() % (b + 1 - a))
-sf::Color TEXTCOLOR = sf::Color::White;
-sf::Font FONT;
 
 class Bullet {
 public:
@@ -36,11 +36,22 @@ public:
     bool shot = false;
     int additionalBulletsTimer = 0;
     int score = 0;
+    sf::Texture* texture = new sf::Texture;
+    sf::SoundBuffer buffer;
+    sf::Sound sound;
 
     Player() {
         shape.setSize(sf::Vector2f(50, 50));
-        shape.setFillColor(sf::Color::Blue);
         shape.setPosition(350, 750);
+        if (!texture->loadFromFile("./Textures/pdefault.png"))
+        {
+            // error...
+        }
+        shape.setTexture(texture);
+        if (!buffer.loadFromFile("./Sounds/laserShoot.wav")) {
+            cout << "a";
+        }
+        sound.setBuffer(buffer);
     }
 
     void moveLeft() {
@@ -63,6 +74,8 @@ public:
         if (!shot) {
             Bullet bullet(shape.getPosition().x + 24, shape.getPosition().y);
             bullets.push_back(bullet);
+            sound.play();
+            
 
             if (additionalBulletsTimer > 0) {
                 Bullet leftBullet(shape.getPosition().x, shape.getPosition().y);
@@ -116,6 +129,7 @@ public:
 
 class Enemy {
 public:
+    sf::Texture* texture;
     sf::RectangleShape shape;
     sf::Clock shootCooldown;
     std::vector<Bullet> enemyBullets;
@@ -124,7 +138,6 @@ public:
 
     Enemy(float x, float y) {
         shape.setSize(sf::Vector2f(50, 50));
-        shape.setFillColor(sf::Color::Red);
         shape.setPosition(x, y);
         shootCooldown.restart();
     }
@@ -155,7 +168,6 @@ public:
 
     void handleBulletHit() {
         hitCount++;
-
         if (hitCount == 1) {
             shape.setFillColor(sf::Color::Yellow);
         }
@@ -289,19 +301,63 @@ bool gameUpdate(Player& player, EnemyManager& enemyManager) {
 }
 
 class Game {
+private:
+    sf::RenderWindow window;
+    float width = 750;
+    float height = 800;
+    Player player;
+    Orb orb;
+    EnemyManager enemyManager;
+    int frameCounter;
+    int score;
+    sf::Text scoreText;
+    std::vector<std::string> buttons{ "Play", "Rules", "Exit" };
+    GameMenu menu;
+
+    sf::RectangleShape background;
+    sf::Texture backgroundTexture;
+
+    sf::Font titleFont;
+    sf::Text titleText;
+
+    sf::Font subtitleFont;
+    sf::Text subtitleText;
+
 public:
-    Game() : window(sf::VideoMode(750, 800), "SFML Window"), player(), orb(), enemyManager(), frameCounter(0), score(0) {
+
+    Game()
+        : window(sf::VideoMode(750, 800), "Space Invaders DLX"),
+        player(),
+        orb(),
+        enemyManager(),
+        frameCounter(0),
+        score(0),
+        menu(375, 250, 60, 110, buttons)
+    {
         srand(time(NULL));
 
-        if (!FONT.loadFromFile("arial.ttf")) {
-            // error
+        background.setSize(sf::Vector2f(width, height));
+        if (!backgroundTexture.loadFromFile("./Space.jpg")) {
+            cout << "Background Error";
         }
+        background.setTexture(&backgroundTexture);
 
-        scoreText.setFont(FONT);
-        scoreText.setCharacterSize(20);
-        scoreText.setFillColor(TEXTCOLOR);
-        scoreText.setPosition(650, 10);
-        updateScoreText();
+        if (!titleFont.loadFromFile("./Fonts/Crang.ttf")) {
+            cout << "Error B";
+        }
+        titleText.setFont(titleFont);
+        titleText.rotate(-10);
+        initText(titleText, 60, 135, "Space Invaders", 60, 4, Color(57, 4, 59), Color(255, 215, 152));
+
+        if (!subtitleFont.loadFromFile("./Fonts/VeniceClassic.ttf")) {
+            cout << "Error B";
+        }
+        subtitleText.setFont(subtitleFont);
+        initText(subtitleText, 535, 135, "(Deluxe)", 50, 3, Color(57, 4, 59), Color(255, 215, 152));
+
+
+        menu.setColorTextMenu(Color::Black);
+        menu.AlignMenu();
     }
 
     void run() {
@@ -314,21 +370,13 @@ public:
         }
     }
 
-private:
-    sf::RenderWindow window;
-    Player player;
-    Orb orb;
-    EnemyManager enemyManager;
-    int frameCounter;
-    int score;
-    sf::Text scoreText;
-
     void handleEvents() {
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
+            menu.GamePlayMenu(window, background, titleText, subtitleText, event);
         }
     }
 
@@ -410,8 +458,7 @@ private:
 
     void render() {
         window.clear();
-
-        window.draw(player.shape);
+        /*window.draw(player.shape);
 
         for (auto& enemy : enemyManager.enemies) {
             window.draw(enemy.shape);
@@ -433,13 +480,23 @@ private:
             window.draw(i.shape);
         }
 
-        window.draw(scoreText);
+        window.draw(scoreText);*/
 
         window.display();
     }
 
     void updateScoreText() {
         scoreText.setString("Score: " + std::to_string(score));
+    }
+
+    void initText(sf::Text& text, float posX, float posY, 
+        std::string str, int sizeFont, int thickness, sf::Color menuTextColor, sf::Color outlineColor) {
+        text.setCharacterSize(sizeFont);
+        text.setPosition(posX, posY);
+        text.setString(str);
+        text.setFillColor(menuTextColor);
+        text.setOutlineThickness(thickness);
+        text.setOutlineColor(outlineColor);
     }
 };
 
