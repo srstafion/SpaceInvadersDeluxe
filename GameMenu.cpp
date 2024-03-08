@@ -1,4 +1,6 @@
+#include "Header.h"
 #include "GameMenu.h"
+
 void GameMenu::setInitText(sf::Text& text, std::string& str, float xpos, float ypos, sf::Color color, int fontSize) {
 	text.setFont(font);
 	text.setFillColor(color);
@@ -8,7 +10,6 @@ void GameMenu::setInitText(sf::Text& text, std::string& str, float xpos, float y
 	text.setOutlineThickness(3);
 }
 
-// Метод, для установки текста посередине экрана
 void GameMenu::AlignMenu() {
 	float nullx = 0;
 
@@ -26,7 +27,7 @@ GameMenu::GameMenu(float menux, float menuy, int sizeFont, int step, std::vector
 	mainMenu(name.size())
 {
 	if (!font.loadFromFile("./Fonts/CooperBits.ttf")) {
-		// error...
+		// Menu Font Error
 	}
 
 	for (int i = 0, posY = menuY; i < mainMenu.size(); i++, posY += menuStep) {

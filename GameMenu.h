@@ -1,6 +1,5 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-#include <iostream>
+#include "Header.h"
 using namespace std;
 using namespace sf;
 class GameMenu {

@@ -6,6 +6,7 @@
 #include <vector>
 #include <conio.h> 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <chrono>
 #include <thread>
 using namespace std;
