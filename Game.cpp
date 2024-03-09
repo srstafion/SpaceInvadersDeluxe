@@ -11,6 +11,21 @@ Game::Game() :
 {
     srand(time(NULL));
 
+    gameBG1Texture.loadFromFile("./Textures/background1.png");
+    gameBG2Texture.loadFromFile("./Textures/background2.png");
+
+    gameBG1.setSize(Vector2f(width, height));
+    gameBG1.setPosition(0,0);
+    gameBG1.setTexture(&gameBG1Texture);
+
+    gameBG2.setSize(Vector2f(width, height));
+    gameBG2.setPosition(0, -height);
+    gameBG2.setTexture(&gameBG2Texture);
+
+    for (int i = 0; i < 5; i++) {
+        stars.push_back(Star());
+    }
+
     background.setSize(Vector2f(width, height));
     if (!backgroundTexture.loadFromFile("./Space.jpg")) {
         cout << "Background Error";
@@ -53,7 +68,7 @@ void Game::handleEvents()
         if (event.type == Event::Closed) {
             window.close();
         }
-        /*menu.GamePlayMenu(window, background, titleText, subtitleText, event);*/
+        //menu.GamePlayMenu(window, background, titleText, subtitleText, event);
     }
 }
 
@@ -72,33 +87,42 @@ void Game::handleInput()
 
 void Game::update()
 {
+    //Move Bullets and Delete if they Reach the Top
     player.updateBullets();
+    //Spawn a Row of Enemies every 3 Seconds
     if (enemyCooldown.getElapsedTime().asMilliseconds() >= 3000
         || enemyFactory.getEnemies().empty()) {
         enemyFactory.addRow();
         enemyCooldown.restart();
     }
-    enemyFactory.moveEn();
-    if (collisionCheck(player, enemyFactory)) {
+    //End the Game if a Player Collides with anything
+    if (collisionCheck()) {
         window.close();
     }
-    for (int i = 0; i < enemyFactory.getEnemies().size(); i++){
+    //Delete Enemies if they reach the bottom and end the Game
+    enemyFactory.updateEnemy();
+    //Move Enemies and make them shoot, move Bullets
+    for (int i = 0; i < enemyFactory.getEnemies().size(); i++) {
+        enemyFactory.getEnemies()[i].update();
+        //Delete Enemy if it collides with a player bullet
         for (int j = 0; j < player.getBullets().size(); j++) {
             if (player.getBullets()[j].getGlobalBounds().
                 intersects(enemyFactory.getEnemies()[i].getGlobalBounds())) {
-                enemyFactory.deleteEnemy(i);
+                enemyFactory.handleBulletHit(i);
                 player.deleteBullet(j);
                 break;
             }
         }
     }
-    /*player.update();
+    gameBG1.move(0, 5);
+    if (gameBG1.getPosition().y >= height) gameBG1.setPosition(0, -height);
+    gameBG2.move(0, 5);
+    if (gameBG2.getPosition().y >= height) gameBG2.setPosition(0, -height);
 
-    if (gameUpdate(player, enemyManager)) {
-        window.close();
+    for (auto& i : stars) {
+        i.commenceMovement();
     }
-
-    orb.update();
+    /*orb.update();
     if (orb.checkCollision(player)) {
         player.additionalBulletsTimer = 100;
         updateScoreText();
@@ -116,6 +140,11 @@ void Game::update()
 void Game::render()
 {
     window.clear();
+    window.draw(gameBG1);
+    window.draw(gameBG2);
+    for (auto& i : stars) {
+        i.draw(window);
+    }
     player.show(window);
     for (auto& enemy : enemyFactory.getEnemies()) {
         enemy.show(window);
@@ -136,30 +165,21 @@ void Game::updateScoreText()
     scoreText.setString("Score: " + std::to_string(score));
 }
 
-bool Game::collisionCheck(Player& player, EnemyFactory& ef)
+bool Game::collisionCheck()
 {
-    for (auto& enemy : ef.getEnemies()) {
+    for (auto& enemy : enemyFactory.getEnemies()) {
         for (auto& bullet : enemy.getBullets()) {
-            if (bullet.getGlobalBounds().intersects(player.getGlobalBounds())) {
+            if (bullet.getGlobalBounds().intersects(player.getMaskOneBounds()) ||
+                bullet.getGlobalBounds().intersects(player.getMaskTwoBounds())) {
                 return true;
                 break;
             }
         }
     }
 
-    for (auto& enemy : ef.getEnemies()) {
-        for (auto& bullet : player.getBullets()) {
-            if (bullet.getGlobalBounds().intersects(enemy.getGlobalBounds())) {
-                //handleHit
-                //removeBullet
-                //changeScore
-                break;
-            }
-        }
-    }
-
-    for (auto& enemy : ef.getEnemies()) {
-        if (player.getGlobalBounds().intersects(enemy.getGlobalBounds())) {
+    for (auto& enemy : enemyFactory.getEnemies()) {
+        if (player.getMaskOneBounds().intersects(enemy.getGlobalBounds()) || 
+            player.getMaskTwoBounds().intersects(enemy.getGlobalBounds())) {
             return true;
             break;
         }

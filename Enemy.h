@@ -5,10 +5,12 @@
 class Enemy {
 private:
     RectangleShape enemy;
-    Texture enemyT;
+    static Texture enemyT;
     Clock shootCooldown;
     vector<Bullet> bullets;
     int hitCount = 0;
+    static SoundBuffer shootB;
+    static Sound shootS;
 public:
     Enemy(Vector2f position);
 
@@ -27,6 +29,8 @@ public:
     void setHits(int hits);
 
     void shoot();
+
+    void moveBullets();
 
     void show(RenderWindow& window);
 };

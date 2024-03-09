@@ -1,9 +1,12 @@
 #include "Bullet.h"
 
-Bullet::Bullet(Vector2f position) {
-    bullet.setFillColor(Color::Yellow);
+Bullet::Bullet(Vector2f position, int side) {
     bullet.setSize(Vector2f(5, 15));
     bullet.setPosition(position);
+    bulletT.loadFromFile("./Textures/enemyBullet.png");
+    bullet.setTexture(&bulletT);
+    //if (side == 0) bullet.setFillColor(Color(255, 0, 0, 240));
+    //else bullet.setFillColor(Color(255, 0, 255, 240));
 }
 
 void Bullet::moveBullet(int amount)
@@ -25,3 +28,4 @@ void Bullet::showBullet(RenderWindow& window)
 {
     window.draw(bullet);
 }
+Texture Bullet::bulletT;

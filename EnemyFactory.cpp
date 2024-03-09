@@ -1,5 +1,13 @@
 #include "EnemyFactory.h"
 
+EnemyFactory::EnemyFactory()
+{
+    hitHurtB.loadFromFile("./Sounds/hitHurt.wav");
+    hitHurt.setBuffer(hitHurtB);
+    explodeB.loadFromFile("./Sounds/explosion.wav");
+    explode.setBuffer(explodeB);
+}
+
 void EnemyFactory::addRow()
 {
     int pattern = rand() % 3;
@@ -46,18 +54,12 @@ void EnemyFactory::show(RenderWindow& window)
     }
 }
 
-void EnemyFactory::moveEn()
-{
-    for (auto& i : enemies) {
-        i.moveEnemy();
-    }
-}
-
 void EnemyFactory::updateEnemy()
 {
-    for (auto i : enemies) {
-        if (i.getPosition().y > 800) {
-            enemies.pop_back();
+    for (int i = 0; i < enemies.size(); i++) {
+        enemies[i].update();
+        if (enemies[i].getPosition().y > 800) {
+            deleteEnemy(i);
         }
     }
 }
@@ -65,6 +67,17 @@ void EnemyFactory::updateEnemy()
 void EnemyFactory::deleteEnemy(int index)
 {
     enemies.erase(enemies.begin() + index);
+}
+
+void EnemyFactory::handleBulletHit(int index)
+{
+    Enemy& enemy = enemies[index];
+    enemy.setHits(enemy.getHits() + 1);
+    if (enemy.getHits() == 3) {
+        deleteEnemy(index);
+        explode.play();
+    }
+    else hitHurt.play();
 }
 
 vector<Enemy> EnemyFactory::getEnemies()

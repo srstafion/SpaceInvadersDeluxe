@@ -5,32 +5,22 @@
 class EnemyFactory {
 private:
     vector<Enemy> enemies;
+    SoundBuffer hitHurtB;
+    Sound hitHurt;
+    SoundBuffer explodeB;
+    Sound explode;
 public:
-    EnemyFactory() {}
+    EnemyFactory();
 
     void addRow();
 
     void show(RenderWindow& window);
 
-    void moveEn();
-
     void updateEnemy();
 
     void deleteEnemy(int index);
 
-    //void handleBulletHit() {
-    //    hitCount++;
-    //    switch (hitCount) {
-    //    case 1:
-    //        enemy.setFillColor(Color::Yellow);
-    //        break;
-    //    case 2:
-    //        enemy.setFillColor(Color::Green);
-    //        break;
-    //    case3:
-    //        /*markForRemoval = true;*/
-    //    }
-    //}
+    void handleBulletHit(int index);
 
     vector<Enemy> getEnemies();
 };

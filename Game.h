@@ -3,12 +3,21 @@
 #include "Player.h"
 #include "EnemyFactory.h"
 #include "GameMenu.h"
+#include "Star.h"
 
 class Game {
 private:
     RenderWindow window;
     float width = 750;
     float height = 800;
+
+    RectangleShape gameBG1;
+    RectangleShape gameBG2;
+    RectangleShape spinningPlanet;
+    Texture gameBG1Texture;
+    Texture gameBG2Texture;
+    Texture spinningPlanetTexture;
+    vector<Star> stars;
 
     Player player;
     EnemyFactory enemyFactory;
@@ -47,7 +56,7 @@ public:
 
     void updateScoreText();
 
-    bool collisionCheck(Player& player, EnemyFactory& ef);
+    bool collisionCheck();
 
     void initText(Text& text, float posX, float posY,
         string str, int sizeFont, int thickness,

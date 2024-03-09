@@ -1,4 +1,3 @@
-﻿  Game.cpp
-C:\Users\Denis pipis\source\repos\Space\Space\Game.cpp(12,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-C:\Users\Denis pipis\source\repos\Space\Space\Game.cpp(178,30): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+﻿  Bullet.cpp
+C:\Users\Denis pipis\source\repos\Space\Space\Bullet.cpp(14,20): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
   Space.vcxproj -> C:\Users\Denis pipis\source\repos\Space\x64\Debug\Space.exe

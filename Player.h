@@ -10,6 +10,8 @@ class Player {
 private:
     RectangleShape player;
     Texture playerT;
+    RectangleShape mask1;
+    RectangleShape mask2;
 
     vector<Bullet> bullets;
     Clock shootCountdown;
@@ -27,7 +29,9 @@ public:
 
     Vector2f getPosition();
 
-    FloatRect getGlobalBounds();
+    FloatRect getMaskOneBounds();
+
+    FloatRect getMaskTwoBounds();
 
     vector<Bullet>& getBullets();
 

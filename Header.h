@@ -11,4 +11,4 @@
 #include <thread>
 using namespace std;
 using namespace sf;
-#define random(a,b) (a+rand()%(b+1-a))
+#define random(a, b) (a + rand()% (b + 1 - a)) 
